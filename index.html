@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Sensibilisation au Phishing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fcfcf9;
+            color: #13343b;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #626c71;
+            margin-bottom: 32px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            background: #fffffd;
+            border: 1px solid rgba(94, 82, 64, 0.12);
+            border-radius: 12px;
+            padding: 16px 24px;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #21808d;
+            margin-bottom: 4px;
+        }
+
+        .score-label {
+            font-size: 13px;
+            color: #626c71;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .email-card {
+            background: #fffffd;
+            border: 1px solid rgba(94, 82, 64, 0.12);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .email-header {
+            border-bottom: 2px solid rgba(94, 82, 64, 0.1);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .email-field {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .email-field strong {
+            color: #626c71;
+            min-width: 100px;
+        }
+
+        .email-field span {
+            color: #13343b;
+            word-break: break-all;
+        }
+
+        .email-body {
+            background: rgba(33, 128, 141, 0.03);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .email-link {
+            color: #21808d;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 180px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-safe {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-safe:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-phishing {
+            background: #c0152f;
+            color: white;
+        }
+
+        .btn-phishing:hover {
+            background: #a01225;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            color: #13343b;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: rgba(192, 21, 47, 0.1);
+            border: 2px solid #c0152f;
+            color: #13343b;
+            display: block;
+        }
+
+        .feedback h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .clue {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-left: 4px solid #21808d;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+
+        .clue-title {
+            font-weight: 600;
+            color: #21808d;
+            margin-bottom: 8px;
+        }
+
+        .clue-list {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .clue-list li {
+            margin-bottom: 6px;
+        }
+
+        .btn-next {
+            background: #21808d;
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-next:hover {
+            background: #1d7480;
+            transform: translateY(-2px);
+        }
+
+        .final-results {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: #fffffd;
+            border: 1px solid rgba(94, 82, 64, 0.12);
+            border-radius: 12px;
+        }
+
+        .final-score {
+            font-size: 72px;
+            font-weight: 700;
+            color: #21808d;
+            margin: 20px 0;
+        }
+
+        .performance {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .performance.excellent { color: #22c55e; }
+        .performance.good { color: #21808d; }
+        .performance.needwork { color: #a84b2f; }
+
+        .tips {
+            text-align: left;
+            margin-top: 32px;
+            padding: 24px;
+            background: rgba(33, 128, 141, 0.05);
+            border-radius: 8px;
+        }
+
+        .tips h3 {
+            margin-bottom: 16px;
+            color: #21808d;
+        }
+
+        .tips ul {
+            margin-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background: #21808d;
+            color: white;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.2s;
+        }
+
+        .btn-restart:hover {
+            background: #1d7480;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1f2121;
+                color: #f5f5f5;
+            }
+            .email-card, .score-item, .final-results {
+                background: #262828;
+                border-color: rgba(119, 124, 124, 0.2);
+            }
+            .subtitle, .email-field strong, .score-label {
+                color: rgba(167, 169, 169, 0.7);
+            }
+            .email-field span {
+                color: #f5f5f5;
+            }
+            .email-body {
+                background: rgba(50, 184, 198, 0.1);
+            }
+            .tips {
+                background: rgba(50, 184, 198, 0.1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Jeu de Sensibilisation au Phishing</h1>
+        <p class="subtitle">Identifiez les emails frauduleux et apprenez à vous protéger</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-value" id="currentQuestion">1</div>
+                <div class="score-label">Question</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value" id="correctAnswers">0</div>
+                <div class="score-label">Correctes</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value" id="totalQuestions">8</div>
+                <div class="score-label">Total</div>
+            </div>
+        </div>
+
+        <div id="gameContainer">
+            <div class="email-card" id="emailCard">
+                <!-- Email content will be inserted here -->
+            </div>
+        </div>
+
+        <div class="final-results" id="finalResults">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="performance" id="performanceText"></div>
+            <p id="performanceDesc"></p>
+
+            <div class="tips">
+                <h3>🛡️ Conseils pour repérer le phishing</h3>
+                <ul>
+                    <li><strong>Vérifiez l'expéditeur :</strong> Les adresses email de phishing contiennent souvent des fautes ou des noms de domaine suspects (ex: paypa1.com au lieu de paypal.com)</li>
+                    <li><strong>Méfiez-vous de l'urgence :</strong> Les emails légitimes ne vous pressent jamais avec des menaces immédiates</li>
+                    <li><strong>Survolez les liens :</strong> Vérifiez l'URL réelle avant de cliquer (elle apparaît en bas de votre navigateur)</li>
+                    <li><strong>Attention aux fautes :</strong> Les emails officiels sont généralement bien rédigés</li>
+                    <li><strong>Ne donnez jamais vos identifiants :</strong> Aucune entreprise légitime ne demande vos mots de passe par email</li>
+                    <li><strong>Vérifiez les pièces jointes :</strong> N'ouvrez pas les fichiers suspects (.exe, .zip d'inconnus)</li>
+                    <li><strong>En cas de doute :</strong> Contactez directement l'entreprise par un canal officiel</li>
+                </ul>
+            </div>
+
+            <button class="btn-restart" onclick="restartGame()">🔄 Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        const emails = [
+            {
+                from: "securite@paypa1-verification.com",
+                subject: "URGENT : Votre compte sera suspendu !",
+                body: "Bonjour,\n\nNous avons détecté une activité suspecte sur votre compte PayPal. Pour éviter la suspension définitive de votre compte, vous devez vérifier vos informations dans les 24 heures.\n\nCliquez ici pour vérifier : http://paypal-secure-login.tk/verify\n\nÉquipe de Sécurité PayPal",
+                isPhishing: true,
+                clues: [
+                    "Adresse email suspecte : 'paypa1' au lieu de 'paypal' (1 au lieu de l)",
+                    "Domaine non officiel (.com au lieu de @paypal.com)",
+                    "Création d'urgence artificielle (24 heures)",
+                    "URL frauduleuse : .tk est un domaine gratuit souvent utilisé pour le phishing",
+                    "Menace de suspension pour forcer l'action rapide"
+                ]
+            },
+            {
+                from: "notifications@linkedin.com",
+                subject: "Marie Dupont a consulté votre profil",
+                body: "Bonjour,\n\nMarie Dupont (Directrice RH chez TechCorp) a consulté votre profil LinkedIn.\n\nVoir son profil : https://www.linkedin.com/in/marie-dupont-rh\n\nVous recevez cet email car vous avez activé les notifications de profil.\n\nÉquipe LinkedIn",
+                isPhishing: false,
+                clues: [
+                    "✓ Adresse email officielle : @linkedin.com",
+                    "✓ Pas de demande d'informations personnelles",
+                    "✓ URL légitime : linkedin.com",
+                    "✓ Pas de ton urgent ou menaçant",
+                    "✓ Notification standard du service"
+                ]
+            },
+            {
+                from: "service.clientele@amazon-livraison.net",
+                subject: "Votre colis est bloqué en douane",
+                body: "Chèr client,\n\nVotre commande #FR28492849 est bloqué en douane. Pour débloquer votre colis, veuillez régler les frais de douane de 2,99€.\n\nPayer maintenant : http://amazon-track.net/pay?id=FR28492849\n\nSi vous ne payez pas sous 48h, votre colis sera retourné à l'expéditeur.\n\nCordialement,\nService Client Amazon",
+                isPhishing: true,
+                clues: [
+                    "Fautes d'orthographe : 'Chèr client', 'est bloqué' (accord)",
+                    "Domaine frauduleux : amazon-livraison.net (Amazon utilise @amazon.fr)",
+                    "URL suspecte : amazon-track.net n'est pas un domaine Amazon",
+                    "Demande de paiement par lien dans un email",
+                    "Pression temporelle (48h) pour forcer l'action"
+                ]
+            },
+            {
+                from: "noreply@google.com",
+                subject: "Nouvelle connexion à votre compte Google",
+                body: "Bonjour,\n\nNous avons détecté une nouvelle connexion à votre compte Google :\n\nAppareil : iPhone 14 Pro\nLocalisation : Paris, France\nDate : 7 novembre 2025, 20:45\n\nSi c'était vous, aucune action n'est nécessaire. Sinon, sécurisez votre compte : https://myaccount.google.com/security\n\nÉquipe de Sécurité Google",
+                isPhishing: false,
+                clues: [
+                    "✓ Adresse officielle : @google.com",
+                    "✓ Informations détaillées et précises",
+                    "✓ URL légitime : myaccount.google.com",
+                    "✓ Pas de demande d'informations sensibles",
+                    "✓ Notification de sécurité standard"
+                ]
+            },
+            {
+                from: "impots-gouv@service-fiscal.info",
+                subject: "Remboursement d'impôts de 387,50€",
+                body: "Madame, Monsieur,\n\nSuite à l'étude de votre dossier fiscal, vous avez droit à un remboursement de 387,50€.\n\nPour recevoir ce remboursement, veuillez remplir le formulaire en ligne :\nhttps://impots-remboursement.info/formulaire\n\nVous devrez fournir vos coordonnées bancaires pour le virement.\n\nDirection Générale des Finances Publiques",
+                isPhishing: true,
+                clues: [
+                    "Domaine frauduleux : service-fiscal.info (le vrai est impots.gouv.fr)",
+                    "Les impôts ne demandent JAMAIS de coordonnées bancaires par email",
+                    "URL suspecte : impots-remboursement.info (domaine non gouvernemental)",
+                    "Appât financier (remboursement) pour attirer l'attention",
+                    "Pas de référence à un dossier fiscal spécifique"
+                ]
+            },
+            {
+                from: "alerts@netflix.com",
+                subject: "Votre abonnement a été mis à jour",
+                body: "Bonjour,\n\nVotre abonnement Netflix Premium a été renouvelé avec succès le 7 novembre 2025 pour 17,99€.\n\nSi vous souhaitez modifier votre abonnement, connectez-vous à votre compte.\n\nProfitez de Netflix !\n\nÉquipe Netflix",
+                isPhishing: false,
+                clues: [
+                    "✓ Adresse officielle : @netflix.com",
+                    "✓ Pas de lien suspect ou demande d'action urgente",
+                    "✓ Confirmation simple de transaction",
+                    "✓ Pas de demande d'informations personnelles",
+                    "✓ Format standard de notification Netflix"
+                ]
+            },
+            {
+                from: "support@microsoft-security.com",
+                subject: "Virus détecté sur votre ordinateur",
+                body: "ALERTE SÉCURITÉ WINDOWS\n\nNotre système a détecté 12 virus sur votre ordinateur Windows.\n\nVotre PC est en DANGER IMMÉDIAT !\n\nTéléchargez notre outil de nettoyage gratuit :\nhttp://windows-fix-now.com/download.exe\n\nOu appelez notre support technique : 01 XX XX XX XX\n\nMicrosoft Security Team",
+                isPhishing: true,
+                clues: [
+                    "Domaine frauduleux : microsoft-security.com (le vrai est @microsoft.com)",
+                    "Alarmisme excessif : 'DANGER IMMÉDIAT', majuscules",
+                    "URL suspecte avec fichier .exe à télécharger",
+                    "Microsoft ne contacte jamais par email pour des virus",
+                    "Numéro de téléphone suspect (support technique non sollicité)",
+                    "Ton paniqué pour forcer une action immédiate"
+                ]
+            },
+            {
+                from: "contact@leboncoin.fr",
+                subject: "Message d'un acheteur pour votre annonce",
+                body: "Bonjour,\n\nVous avez reçu un message concernant votre annonce 'iPhone 13 Pro'.\n\nMessage de Jean Martin :\n'Bonjour, je suis intéressé par votre iPhone. Est-il toujours disponible ?'\n\nRépondre : https://www.leboncoin.fr/messages/conversation/38472\n\nÉquipe Leboncoin",
+                isPhishing: false,
+                clues: [
+                    "✓ Adresse officielle : @leboncoin.fr",
+                    "✓ URL légitime : leboncoin.fr",
+                    "✓ Notification standard du service",
+                    "✓ Pas de demande d'informations sensibles",
+                    "✓ Message cohérent avec le fonctionnement du site"
+                ]
+            }
+        ];
+
+        let currentEmailIndex = 0;
+        let correctCount = 0;
+        let answered = false;
+
+        function displayEmail() {
+            const email = emails[currentEmailIndex];
+            const emailCard = document.getElementById('emailCard');
+            
+            emailCard.innerHTML = `
+                <div class="email-header">
+                    <div class="email-field">
+                        <strong>De :</strong>
+                        <span>${email.from}</span>
+                    </div>
+                    <div class="email-field">
+                        <strong>Objet :</strong>
+                        <span>${email.subject}</span>
+                    </div>
+                </div>
+                
+                <div class="email-body">
+                    ${email.body.replace(/\n/g, '<br>')}
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn btn-safe" onclick="checkAnswer(false)">
+                        ✅ Email Légitime
+                    </button>
+                    <button class="btn btn-phishing" onclick="checkAnswer(true)">
+                        ⚠️ Phishing !
+                    </button>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            `;
+            
+            answered = false;
+            document.getElementById('currentQuestion').textContent = currentEmailIndex + 1;
+        }
+
+        function checkAnswer(userSaysPhishing) {
+            if (answered) return;
+            answered = true;
+
+            const email = emails[currentEmailIndex];
+            const isCorrect = userSaysPhishing === email.isPhishing;
+            const feedback = document.getElementById('feedback');
+            
+            if (isCorrect) {
+                correctCount++;
+                document.getElementById('correctAnswers').textContent = correctCount;
+                
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `
+                    <h3>✅ Correct !</h3>
+                    <p>${email.isPhishing ? 'Vous avez bien identifié ce phishing.' : 'Cet email est effectivement légitime.'}</p>
+                    <div class="clue">
+                        <div class="clue-title">🔍 Indices ${email.isPhishing ? 'suspects' : 'de légitimité'} :</div>
+                        <ul class="clue-list">
+                            ${email.clues.map(clue => `<li>${clue}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ${currentEmailIndex < emails.length - 1 ? '<button class="btn-next" onclick="nextEmail()">Question Suivante →</button>' : '<button class="btn-next" onclick="showResults()">Voir les Résultats →</button>'}
+                `;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `
+                    <h3>❌ Incorrect</h3>
+                    <p>${email.isPhishing ? 'Attention ! Cet email est un phishing.' : 'Cet email est légitime et sans danger.'}</p>
+                    <div class="clue">
+                        <div class="clue-title">🔍 Voici pourquoi :</div>
+                        <ul class="clue-list">
+                            ${email.clues.map(clue => `<li>${clue}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ${currentEmailIndex < emails.length - 1 ? '<button class="btn-next" onclick="nextEmail()">Question Suivante →</button>' : '<button class="btn-next" onclick="showResults()">Voir les Résultats →</button>'}
+                `;
+            }
+        }
+
+        function nextEmail() {
+            currentEmailIndex++;
+            if (currentEmailIndex < emails.length) {
+                displayEmail();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('finalResults').style.display = 'block';
+            
+            const percentage = Math.round((correctCount / emails.length) * 100);
+            document.getElementById('finalScore').textContent = `${correctCount}/${emails.length}`;
+            
+            const performanceText = document.getElementById('performanceText');
+            const performanceDesc = document.getElementById('performanceDesc');
+            
+            if (percentage >= 80) {
+                performanceText.textContent = '🏆 Excellent !';
+                performanceText.className = 'performance excellent';
+                performanceDesc.textContent = 'Vous êtes un expert en détection de phishing ! Vous savez repérer les emails frauduleux.';
+            } else if (percentage >= 50) {
+                performanceText.textContent = '👍 Bien joué !';
+                performanceText.className = 'performance good';
+                performanceDesc.textContent = 'Vous avez de bonnes bases, mais restez vigilant. Consultez les conseils ci-dessous.';
+            } else {
+                performanceText.textContent = '⚠️ Attention !';
+                performanceText.className = 'performance needwork';
+                performanceDesc.textContent = 'Vous êtes vulnérable au phishing. Lisez attentivement les conseils ci-dessous pour vous protéger.';
+            }
+        }
+
+        function restartGame() {
+            currentEmailIndex = 0;
+            correctCount = 0;
+            document.getElementById('correctAnswers').textContent = '0';
+            document.getElementById('gameContainer').classList.remove('hidden');
+            document.getElementById('finalResults').style.display = 'none';
+            displayEmail();
+        }
+
+        // Initialize game
+        displayEmail();
+    </script>
+</body>
+</html>
+
